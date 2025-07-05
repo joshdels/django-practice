@@ -30,6 +30,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'localhost'),
     'django-practice-2.onrender.com'  
+    ('localhost', '127.0.0.1')
     ]
 
 
