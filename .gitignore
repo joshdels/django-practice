@@ -1,0 +1,4 @@
+djangoenv/
+env/
+venv/
+.venv/
