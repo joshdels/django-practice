@@ -26,7 +26,6 @@ SECRET_KEY = "django-insecure-km!+v_fw5^8nllxc5u9g_j1_mb32u&u=#dr9ok9c)t4djwt-a5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 ALLOWED_HOSTS = [
     os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'localhost'),
     'django-practice-2.onrender.com',
@@ -43,7 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "members"
+    "members",
+    "bootstrap5",
 ]
 
 MIDDLEWARE = [
@@ -79,7 +79,6 @@ WSGI_APPLICATION = "my_tennis_club.wsgi.application"
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -133,14 +132,10 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 STATIC_ROOT = BASE_DIR / 'productionfiles'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'productionfiles')
 
 STATICFILES_DIRS = [
     BASE_DIR / 'mystaticfiles'
 ]
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
