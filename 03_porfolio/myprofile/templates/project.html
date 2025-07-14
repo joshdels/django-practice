@@ -1,0 +1,28 @@
+{% extends "master.html" %}
+
+{% block title %}
+  Homepage
+{% endblock %}
+
+{% block content %}
+<!-- insert text -->
+ <div class="container-fluid p-4">
+  {% for project in projects %}
+    <h1> {{project.name}} </h1>
+    <p>Date Published {{ project.pub_date }}</p>
+
+    <p>Raw field: {{ project.image }}</p>
+    <p>URL: {{project.image.url}}</p>
+
+    {% if project.image %}
+      <p>There is an img!</p>
+      <img src="{{project.image.url}}" alt="image" style="width: 300px;">
+    {% else %}
+      <p><em>No image uploaded for this project.</em></p>
+    {% endif %}
+    <p> {{project.content}} </p>
+
+  {% endfor %}
+ </div>
+ 
+{% endblock %}
