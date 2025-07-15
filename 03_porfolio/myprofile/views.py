@@ -10,14 +10,14 @@ def homepage(request):
   return HttpResponse(template.render(content, request))
 
 def project(request):
-  project = Project.objects.all().values
+  project = Project.objects.all().order_by("-pub_date")
   template = loader.get_template('project.html')
   content = {'projects': project}
   return HttpResponse(template.render(content, request))
 
-def experience(request):
-  experience = Experience.objects.all().values
-  template = loader.get_template('experience.html')
+def about_me(request):
+  experience = Experience.objects.all().order_by("-date_joined")
+  template = loader.get_template('about_me.html')
   content = {'experiences': experience}
   return HttpResponse(template.render(content, request))
 
@@ -27,21 +27,20 @@ def contact(request):
     last_name = request.POST.get('last_name')
     email = request.POST.get('email')
     role = request.POST.get('role')
+    comment = request.POST.get('comment')
     
     if Client.objects.filter(email=email).exists():
-      return render(request, 'contact.html', {
-        'error': 'Email has already been taken.',
-        'first_name': first_name,
-        'last_name': last_name,
-        'email': email,
-        'role': role
-    })
+        return render(request, 'contact.html', {
+            'error': 'Email has already been taken.',
+            'success': False, 
+        })
     
     Client.objects.create(
       first_name=first_name,
       last_name=last_name,
       email=email,
-      position=role
+      position=role,
+      comment=comment
     )
     
     return render(request, 'contact.html', {'success': True})
