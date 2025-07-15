@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,9 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-azxu-s+%*@-6nse-i*voczoi$$n9y3j^b#n%8gg-dcvw%ar6p^"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'localhost'),
+    'django-practice-2.onrender.com',
+    'localhost', '127.0.0.1'
+    ]
 
 
 # Application definition
@@ -74,12 +78,28 @@ WSGI_APPLICATION = "porfolio.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_practice_jan8',
+        'USER': 'joshdels',
+        'PASSWORD': '91etCF3KreeFhsZApeFdySYfNmxzGM4Z',
+        'HOST': 'dpg-d1khuhndiees73ei53f0-a.singapore-postgres.render.com',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        }
     }
 }
+
+
 
 
 # Password validation
@@ -113,6 +133,9 @@ USE_TZ = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-STATIC_URL = "/static/"
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATICFILES_DIRS = [BASE_DIR / "static"]
