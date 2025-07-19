@@ -1,0 +1,19 @@
+{% extends "master_template.html" %}
+{% block title %} Register {% endblock %} 
+
+{% block content %}
+  <h1>Create an Account</h1>
+  <form action="" method="GET">
+    <label for="username">Username</label>
+    <input type="text" name="username" placeholder="Username"><br>
+    <label for="firsname">First Name</label>
+    <input type="text" name="firstname" placeholder="First Name"><br>
+    <label for="lastname">Last Name</label>
+    <input type="text" name="lastname" placeholder="Last Name"><br>
+    <label for="email">Email</label>
+    <input type="text" name="email" placeholder="Email"><br>
+    <label for="passowrd">Password</label>
+    <input type="text" name="password" placeholder="Password"><br>
+    <button type="submit">Create</button>
+  </form>
+{% endblock %}
