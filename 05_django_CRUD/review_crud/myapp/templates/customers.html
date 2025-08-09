@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Load data</title>
+</head>
+<body>
+  <h1>Name of Customers</h1>
+  {% if customers %}
+    <ol>
+      {% for customer in customers %}
+        <li>
+          <a href="{% url 'delete-data' customer.id %}">X</a>
+          {{ customer.name }} | {{ customer.email}} | {{ customer.number }} | 
+          <a href=" {% url 'edit-data' customer.id %}">Edit</a> 
+        </li> 
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p>No customers</p>
+  {% endif %}
+  
+  <a href="{% url 'add-data' %}">Add Customer</a>
+  
+
+</body>
+</html>
