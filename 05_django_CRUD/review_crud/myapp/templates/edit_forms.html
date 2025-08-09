@@ -1,4 +1,4 @@
-<form method="POST" action="{% url 'edit-data' customer.id %}">
+<form method="POST" enctype="multipart/form-data" action="{% url 'edit-data' customer.id %}">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Save</button>

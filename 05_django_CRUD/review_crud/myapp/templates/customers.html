@@ -13,9 +13,32 @@
       {% for customer in customers %}
         <li>
           <a href="{% url 'delete-data' customer.id %}">X</a>
-          {{ customer.name }} | {{ customer.email}} | {{ customer.number }} | 
-          <a href=" {% url 'edit-data' customer.id %}">Edit</a> 
-        </li> 
+          {{ customer.name }} | {{ customer.email }} | {{ customer.number }} |
+          {% if customer.profile_pic %}
+            <img src="{{ customer.profile_pic.url }}" alt="photo" width="200">
+          {% endif %}
+          <a href="{% url 'edit-data' customer.id %}">Edit</a>
+          
+          <!-- Products -->
+          <div>          
+            {% for product in customer.products.all %}
+              {% if product.item %}
+                <ul>
+                  <li>{{ product.item }}</li>
+                </ul>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <!-- Photos -->
+           <div>
+              {% for photo in customer.photos.all %}
+                <img src="{{ photo.image.url}}" alt="photo" width="150">
+              {% empty %}
+                <p>No photos available</p>
+              {% endfor %}
+           </div>
+        </li>
       {% endfor %}
     </ol>
   {% else %}

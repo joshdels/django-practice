@@ -1,5 +1,19 @@
-<form method="POST" action="{% url 'add-data' %}">
+<form method="POST" enctype="multipart/form-data" action="{% url 'add-data' %}">
   {% csrf_token %}
+
   {{ form.as_p }}
+
+  <!-- products -->
+  {{ formset.management_form }}
+  {% for subform in formset %}
+    {{ subform.as_p }}
+  {% endfor %}
+
+  <!-- Images formset -->
+  {{ imageset.management_form }}
+  {% for subform in imageset %}
+      {{ subform.as_p }}
+  {% endfor %}
+
   <button type="submit">Save</button>
 </form>
