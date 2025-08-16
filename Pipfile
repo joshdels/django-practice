@@ -14,6 +14,7 @@ tzdata = "==2025.2"
 whitenoise = "==6.9.0"
 django = "*"
 djangorestframework = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
