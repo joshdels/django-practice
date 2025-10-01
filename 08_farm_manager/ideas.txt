@@ -1,0 +1,10 @@
+API Practice for farm Manager
+1. Login/Logout
+2. Database
+3. APIs
+4. Farm Task
+5. Report Analytics
+
+A. CRUD
+B. Authentication
+C. Reports
