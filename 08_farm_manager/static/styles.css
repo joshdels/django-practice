@@ -1,0 +1,29 @@
+html, body {
+  margin: 0px;
+  padding: 10px 50px
+}
+
+h1 {
+  padding-bottom: 10px; 
+  border-bottom: 0.5px solid rgb(148, 148, 148)
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  gap: 10px
+}
+
+.list ul {
+  margin: 0px;
+  padding-left: 10px;
+}
+
+.list li {
+  display: flex;
+  gap: 10px;
+  padding: 3px;
+  margin: 0px
+}
+
+

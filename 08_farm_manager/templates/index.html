@@ -1,17 +1,49 @@
+{% extends '_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <h1>Farm Details</h1>
-  <ul>
-    {% for farm in farms %}
-    <li>{{farm.name}}, {{farm.location}} <button>delete</button></li>
-    {% endfor %}
-  </ul>
-</body>
-</html>
+
+{% block content %}
+
+  <h1>Farm Lists</h1>
+  <div class="header">
+    {% if user.is_authenticated %}
+    <div class="login">
+      Hi! {{ user.username }}
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Log Out</button>
+      </form>
+      <button><a href="{% url 'change-password' %}">Change Password</a></button>
+    </div>
+    <div class="add">
+      <h3>Add new farm</h3>
+      <a href="{% url 'add' %}">
+        <button>Add</button>
+      </a>
+    </div>
+
+    {% else %}
+      <h3>You are not login</h3>
+      <button><a href="{% url 'login' %}">Log In</a></button>
+      <p>Are you new? Signup bellow</p>
+      <button><a href="{% url 'signup' %}">Sign Up</a></button>
+      <p>Forgot Password?</p>
+      <button><a href="{% url 'password-reset-confirm' %}">Reset</a></button>
+    {% endif %}
+
+  </div>
+  <div class="list">
+    <ul>
+      {% for farm in farms %}
+      <li><a href="{% url 'edit' farm.id %}">edit</a>
+        <a href="{% url 'list' farm.id %}">{{farm.name}}</a>
+        {{farm.location}} 
+        <form action="{% url 'delete' farm.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit">delete</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+{% endblock %}

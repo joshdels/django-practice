@@ -5,6 +5,6 @@ API Practice for farm Manager
 4. Farm Task
 5. Report Analytics
 
-A. CRUD
-B. Authentication
+A. CRUD - done
+B. Authentication - on going
 C. Reports

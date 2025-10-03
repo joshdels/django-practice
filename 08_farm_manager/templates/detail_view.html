@@ -1,0 +1,13 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="main">
+  <h1>Farm Detail</h1>
+  <a href="{% url 'index' %}">back</a>
+  <p>{{ farm.name }}</p>
+  <p>{{ farm.location }}</p>
+  <a href="{% url 'edit' farm.id %}">Edit</a>
+</div>
+
+{% endblock content %}

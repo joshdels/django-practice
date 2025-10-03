@@ -1,0 +1,14 @@
+{% extends '_base.html' %}
+{% block content %}
+
+<div class="main">
+  <h1>Edit Farm Detail</h1>
+  <a href="{% url 'index' %}">back</a>
+  <form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="update">
+  </form>
+</div>
+
+{% endblock content %}
