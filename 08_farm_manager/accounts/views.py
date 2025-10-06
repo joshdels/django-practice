@@ -7,8 +7,6 @@ from django.contrib.auth.forms import (
   SetPasswordForm,
 )
 from django.contrib.auth import (
-  login, 
-  logout, 
   update_session_auth_hash
 )
 from django.contrib.auth.tokens import default_token_generator
@@ -18,36 +16,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
 from django.urls import reverse
-
-
-def signupView(request):
-  if request.method == "POST":
-    form = UserCreationForm(request.POST)
-    if form.is_valid():
-      form.save()
-      return redirect(reverse("login"))
-  else:
-    form = UserCreationForm()
-  
-  return render(request, "registration/signup.html", {"form": form})
-
-
-def loginView(request):
-  if request.method == "POST":
-    form = AuthenticationForm(request, data=request.POST)
-    if form.is_valid():
-      user = form.get_user()
-      login(request, user)
-      return redirect(reverse("index"))
-  else: 
-    form  = AuthenticationForm()
-  
-  return render(request, "registration/login.html", {"form": form})
-
-
-def logoutView(request):
-  logout(request)
-  return redirect(reverse("login"))
 
 
 @login_required
