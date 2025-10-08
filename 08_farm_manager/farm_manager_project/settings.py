@@ -1,7 +1,11 @@
 from pathlib import Path
+from environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = Env()
+env.read_env(BASE_DIR / '.env' )
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -31,7 +35,20 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+SITE_ID = 1
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': env('OAUTH_GOOGLE_CLIENT_ID'),
+            'secret': env('OAUTH_GOOGLE_SECRET'),
+        }
+    }
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -128,3 +145,5 @@ LOGOUT_REDIRECT_URL = "/"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 ACCOUNT_LOGIN_METHODS  = ['email']
 ACCOUNT_SIGNUP_FIELDS  = ['email*', 'username*', 'password1*', 'password2*']
+
+SOCIALACCOUNT_LOGIN_ON_GET = True

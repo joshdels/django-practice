@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'api_v2',
     'api_v2_geek_book',
     'api_v3_crud',
+    'drf_yasg',
 ]
 
 REST_FRAMEWORK = {
