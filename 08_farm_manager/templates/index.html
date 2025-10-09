@@ -26,6 +26,7 @@
       <h3>You are not login</h3>
       <button><a href="{% url 'account_login' %}">Log In</a></button>
       <button><a href="{% provider_login_url 'google' %}">Google</a></button>
+      <button><a href="{% provider_login_url 'facebook' %}">Facebook</a></button>
       <p>Are you new? Signup bellow</p>
       <button><a href="{% url 'account_signup' %}">Sign Up</a></button>
       <p>Forgot Password?</p>

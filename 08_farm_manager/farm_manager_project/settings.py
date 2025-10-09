@@ -7,6 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = Env()
 env.read_env(BASE_DIR / '.env' )
 
+ENVIRONMENT = env('ENVIRONMENT')
+
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-vq*@-b@ahygi!+6&@pskrx3pgi@myb)1wxkg@mza1uqkp=w1!0"
@@ -25,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.sites",
     "django.contrib.staticfiles",
 
     # apps
@@ -36,6 +40,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 SITE_ID = 1
@@ -46,7 +51,25 @@ SOCIALACCOUNT_PROVIDERS = {
         'APP': {
             'client_id': env('OAUTH_GOOGLE_CLIENT_ID'),
             'secret': env('OAUTH_GOOGLE_SECRET'),
+        },
+        'SCOPE': [
+          'profile',
+          'email',
+        ],
+        'AUTH_PARAMS': {
+          'access_type': 'online',
+          'prompt': 'consent'
         }
+    },
+    'facebook': {
+      'APP': {
+        'client_id': env('SOCIAL_AUTH_FACEBOOK_KEY'),
+        'secret': env('SOCIAL_AUTH_FACEBOOK_SECRET')
+      },
+        'AUTH_PARAMS': {
+        'auth_type': 'reauthenticate'
+      }
+
     }
 }
 
@@ -133,17 +156,30 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 LOGIN_REDIRECT_URL = "/" 
 LOGOUT_REDIRECT_URL = "/"
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+
+if ENVIRONMENT == 'production':
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = env('EMAIL_ADDRESS')
+    EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD')
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = f'Django Practice {env("EMAIL_ADDRESS")}'
+    ACCOUNT_EMAIL_SUBJECT_PREFIX= ''
+else :
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 ACCOUNT_LOGIN_METHODS  = ['email']
 ACCOUNT_SIGNUP_FIELDS  = ['email*', 'username*', 'password1*', 'password2*']
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
+ACCOUNT_ADAPTER ="accounts.adapters.CustomAccountAdapter"
