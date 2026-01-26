@@ -23,6 +23,8 @@
     <input type="submit" value="Upload">
 </form>
 
+<hr>
+
 <h2>Files</h2>
 <ul>
 {% for file in files %}
@@ -35,8 +37,56 @@
                 Default
             {% endif %}
         </a>
+        {% if file.is_latest %}
+            <strong>(Latest)</strong>
+        {% endif %}
     </li>
 {% empty %}
     <li>No files yet</li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>Projects</h2>
+<ul>
+{% for project in projects %}
+    <li>
+        {{ project.name }} 
+        {% if project.is_deleted %}
+            <em>(Deleted)</em>
+        {% endif %}
+
+        <!-- Soft Delete Button -->
+        {% if not project.is_deleted %}
+        <form action="{% url 'soft-delete-project' project.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Soft Delete</button>
+        </form>
+        {% endif %}
+
+        <!-- Permanent Delete Button -->
+        <form action="{% url 'delete-project' project.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" style="color:red;">Delete Permanently</button>
+        </form>
+
+        <!-- Optional: Show File Activity Logs for this project -->
+        <ul>
+        {% for file in project.file_set.all %}
+            <li>
+                {{ file.name }} (v{{ file.version }})
+                {% if file.is_latest %}<strong>(Latest)</strong>{% endif %}
+                <ul>
+                {% for log in file.fileactivity_set.all %}
+                    <li>{{ log.action }} by {{ log.user }} at {{ log.created_at }}</li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
+    </li>
+{% empty %}
+    <li>No projects yet</li>
 {% endfor %}
 </ul>
