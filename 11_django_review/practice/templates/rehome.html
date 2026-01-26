@@ -1,28 +1,41 @@
 <h1>Upload or Re-upload File</h1>
+
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    
-    <p>{{ form.file_object.label_tag }}<br>{{ form.file_object }}</p>
-    <p>{{ form.new_file_name.label_tag }}<br>{{ form.new_file_name }}</p>
+
+    <!-- File Upload -->
     <p>{{ form.uploaded_file.label_tag }}<br>{{ form.uploaded_file }}</p>
-    
+
+    <!-- Optional: Select Existing Project -->
+    <p>{{ form.project.label_tag }}<br>{{ form.project }}</p>
+
+    <!-- Optional: Create New Project -->
+    <p>{{ form.new_project_name.label_tag }}<br>{{ form.new_project_name }}</p>
+
+    {% if form.non_field_errors %}
+        <ul style="color: red;">
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
     <input type="submit" value="Upload">
 </form>
 
 <h2>Files</h2>
 <ul>
 {% for file in files %}
-    {% with latest=file.versions.first %}
-        {% if latest %}
-            <li>
-                <a href="{{ latest.uploaded_file.url }}" target="_blank">
-                    {{ file.name }} (v{{ latest.version }})
-                </a>
-            </li>
-        {% else %}
-            <li>{{ file.name }} (no version)</li>
-        {% endif %}
-    {% endwith %}
+    <li>
+        <a href="{{ file.uploaded_file.url }}" target="_blank">
+            {{ file.name }} (v{{ file.version }}) — Project: 
+            {% if file.project %}
+                {{ file.project.name }}
+            {% else %}
+                Default
+            {% endif %}
+        </a>
+    </li>
 {% empty %}
     <li>No files yet</li>
 {% endfor %}

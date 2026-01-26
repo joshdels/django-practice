@@ -1,35 +1,37 @@
 from django import forms
-
-from .models import File, FileVersion
+from .models import Project, File
 
 
 class ReuploadFileForm(forms.ModelForm):
-    file_object = forms.ModelChoiceField(
-        queryset=File.objects.none(),
+    uploaded_file = forms.FileField(required=True, label="Choose File")
+
+    # Optional: select existing project
+    project = forms.ModelChoiceField(
+        queryset=Project.objects.all(),
         required=False,
-        label="Select File",
+        label="Select Existing Project",
+        empty_label="-- None --",
     )
 
-    new_file_name = forms.CharField(
-        max_length=255, required=False, label="New File Name"
+    # Optional: create new project
+    new_project_name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="New Project Name",
+        help_text="If provided, this will create a new project.",
     )
 
     class Meta:
-        model = FileVersion
-        fields = ["uploaded_file"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["file_object"].queryset = File.objects.all()
+        model = File
+        fields = ["uploaded_file", "project", "new_project_name"]
 
     def clean(self):
         cleaned_data = super().clean()
-        file_obj = cleaned_data.get("file_object")
-        new_name = cleaned_data.get("new_file_name")
+        project = cleaned_data.get("project")
+        new_project_name = cleaned_data.get("new_project_name")
 
-        if not file_obj and not new_name:
+        if project and new_project_name:
             raise forms.ValidationError(
-                "You must either select an existing file or provide a new file name."
+                "You cannot select an existing project and create a new project at the same time."
             )
-
         return cleaned_data

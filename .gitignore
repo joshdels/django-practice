@@ -3,3 +3,4 @@ venv/
 .venv/
 00_virtualEnv
 .env
+uploads/

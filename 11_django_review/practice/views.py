@@ -1,6 +1,7 @@
 import hashlib
+
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import File, FileVersion
+from .models import Project, File
 from .forms import ReuploadFileForm
 
 
@@ -14,49 +15,83 @@ def compute_hash(uploaded_file):
 def rehome(request):
     if request.method == "POST":
         form = ReuploadFileForm(request.POST, request.FILES)
-
         if form.is_valid():
-            file_obj = form.cleaned_data.get("file_object")
-            new_name = form.cleaned_data.get("new_file_name")
             uploaded_file = form.cleaned_data["uploaded_file"]
 
-            # Create a new File if none selected
-            if not file_obj:
-                file_obj = File.objects.create(
-                    name=new_name,
-                    owner=request.user if request.user.is_authenticated else None
+            # --- Determine the project ---
+            selected_project = form.cleaned_data.get("project")
+            new_project_name = form.cleaned_data.get("new_project_name")
+
+            if new_project_name:
+                # Create or get a new project
+                project, _ = Project.objects.get_or_create(
+                    name=new_project_name,
+                    owner=request.user if request.user.is_authenticated else None,
+                )
+            elif selected_project:
+                # Use existing project
+                project = selected_project
+            else:
+                # Default project
+                project, _ = Project.objects.get_or_create(
+                    name="default_project",
+                    owner=request.user if request.user.is_authenticated else None,
                 )
 
-            # Compute hash
+            # --- Determine logical file name and folder ---
+            file_name = uploaded_file.name
+            file_folder = file_name.replace(" ", "_")
+
+            # --- Compute file hash ---
             file_hash = compute_hash(uploaded_file)
 
-            # Check if this exact file already exists
-            if file_obj.versions.filter(hash=file_hash).exists():
-                form.add_error("uploaded_file", "This file already exists for this File.")
+            # --- Check for duplicate within this project only ---
+            existing_files = File.objects.filter(
+                owner=request.user if request.user.is_authenticated else None,
+                project=project,
+                hash=file_hash,
+            )
+            if existing_files.exists():
+                form.add_error(
+                    "uploaded_file", "This exact file already exists in the project."
+                )
             else:
-                # Get latest version number
-                latest_version = file_obj.versions.first()
-                version_number = (latest_version.version + 1) if latest_version else 1
+                # --- Determine version number for this file in this project ---
+                latest_file = (
+                    File.objects.filter(
+                        owner=request.user if request.user.is_authenticated else None,
+                        project=project,
+                        name=file_name,
+                    )
+                    .order_by("-version")
+                    .first()
+                )
+                version_number = (latest_file.version + 1) if latest_file else 1
 
-                # Create new FileVersion
-                FileVersion.objects.create(
-                    file=file_obj,
+                # --- Create the File record ---
+                File.objects.create(
+                    name=file_name,
+                    owner=request.user if request.user.is_authenticated else None,
                     uploaded_file=uploaded_file,
                     hash=file_hash,
                     size=uploaded_file.size,
                     version=version_number,
+                    project=project,
+                    file_folder=file_folder,
                 )
 
-            # If there were errors (duplicate), render form again
+            # --- Re-render form if errors ---
             if form.errors:
-                files = File.objects.prefetch_related("versions").all()
+                files = File.objects.all()
                 return render(request, "rehome.html", {"form": form, "files": files})
 
             return redirect("rehome")
+
     else:
         form = ReuploadFileForm()
 
-    files = File.objects.prefetch_related("versions").all()
+    # Show all files
+    files = File.objects.all()
     return render(request, "rehome.html", {"form": form, "files": files})
 
 
