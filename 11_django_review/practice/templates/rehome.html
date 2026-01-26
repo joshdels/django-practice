@@ -1,0 +1,29 @@
+<h1>Upload or Re-upload File</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <p>{{ form.file_object.label_tag }}<br>{{ form.file_object }}</p>
+    <p>{{ form.new_file_name.label_tag }}<br>{{ form.new_file_name }}</p>
+    <p>{{ form.uploaded_file.label_tag }}<br>{{ form.uploaded_file }}</p>
+    
+    <input type="submit" value="Upload">
+</form>
+
+<h2>Files</h2>
+<ul>
+{% for file in files %}
+    {% with latest=file.versions.first %}
+        {% if latest %}
+            <li>
+                <a href="{{ latest.uploaded_file.url }}" target="_blank">
+                    {{ file.name }} (v{{ latest.version }})
+                </a>
+            </li>
+        {% else %}
+            <li>{{ file.name }} (no version)</li>
+        {% endif %}
+    {% endwith %}
+{% empty %}
+    <li>No files yet</li>
+{% endfor %}
+</ul>

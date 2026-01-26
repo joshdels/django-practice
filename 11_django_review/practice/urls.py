@@ -2,5 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-  path("", views.home, name="home")
+  path("rehome/", views.rehome, name="rehome"),
+  path("rehome/<int:pk>/delete/", views.delete_file, name="delete-file")
 ]
