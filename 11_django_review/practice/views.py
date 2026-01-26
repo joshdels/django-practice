@@ -46,15 +46,24 @@ def rehome(request):
             file_hash = compute_hash(uploaded_file)
 
             # --- Check for duplicate within this project only ---
-            existing_files = File.objects.filter(
+            existing_same_content = File.objects.filter(
                 owner=request.user if request.user.is_authenticated else None,
                 project=project,
+                name=file_name,
                 hash=file_hash,
-            )
-            if existing_files.exists():
-                form.add_error(
-                    "uploaded_file", "This exact file already exists in the project."
-                )
+            ).first()
+
+            if existing_same_content:
+                File.objects.filter(
+                    owner=request.user if request.user.is_authenticated else None,
+                    project=project,
+                    name=file_name,
+                    is_latest=True,
+                ).update(is_latest=False)
+            
+                existing_same_content.is_latest = True
+                existing_same_content.save(update_fields=["is_latest"])
+
             else:
                 # --- Determine version number for this file in this project ---
                 latest_file = (
@@ -62,11 +71,19 @@ def rehome(request):
                         owner=request.user if request.user.is_authenticated else None,
                         project=project,
                         name=file_name,
+                        is_latest=True,
                     )
                     .order_by("-version")
                     .first()
                 )
                 version_number = (latest_file.version + 1) if latest_file else 1
+
+                File.objects.filter(
+                    owner=request.user if request.user.is_authenticated else None,
+                    project=project,
+                    name=file_name,
+                    is_latest=True
+                ).update(is_latest=False)
 
                 # --- Create the File record ---
                 File.objects.create(
@@ -78,6 +95,7 @@ def rehome(request):
                     version=version_number,
                     project=project,
                     file_folder=file_folder,
+                    is_latest=True,
                 )
 
             # --- Re-render form if errors ---

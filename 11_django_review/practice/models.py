@@ -1,6 +1,7 @@
 import os
 from django.db import models
 from django.conf import settings
+from django.db.models import Q, UniqueConstraint
 
 
 def file_upload_path(instance, filename):
@@ -35,8 +36,9 @@ class File(models.Model):
     size = models.PositiveBigIntegerField()
     version = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    is_latest = models.BooleanField(default=False, db_index=True)
 
-    # Link file to a Project
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, null=True, blank=True
     )
@@ -44,8 +46,14 @@ class File(models.Model):
     file_folder = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        unique_together = ("owner", "project", "name", "hash")
         ordering = ["-created_at"]
+        constraints = [
+            UniqueConstraint(
+                fields=["owner", "project", "name"],
+                condition=Q(is_latest=True),
+                name="one_latest_file_per_logical_file",
+            )
+        ]
 
     def __str__(self):
         return f"{self.name} v{self.version}"
