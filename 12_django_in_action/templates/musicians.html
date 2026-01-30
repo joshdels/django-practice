@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Musicians
+{% endblock title%}
+
+{% block content %}
+  <h1>Musicians</h1>
+
+  {% if page.has_other_pages%}
+    {% if page.has_previous %}
+      <a href="{% url 'musicians' %}?page={{page.prevoius_page_number}}">
+        Prev
+      </a>
+    {% endif %}
+    {% if page.has_next %}
+      <a href="{% url 'musicians' %}?page={{page.previous_page_number}}">Next</a>
+    {% endif %}
+  {% endif %}
+
+
+{% endblock content%}

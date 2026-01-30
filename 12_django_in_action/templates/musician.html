@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Musician
+{% endblock title%}
+
+{% block content %} 
+  <h1>{{musician.first_name|capfirst}} {{musician.last_name}}</h1>
+  <p>Was born on {{musician.birth}}.</p>
+{% endblock content%}
